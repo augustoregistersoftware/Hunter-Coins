@@ -1,4 +1,4 @@
-// FIX: Add a triple-slash reference to the A-Frame type definitions to make TypeScript aware of the custom elements.
+// Fix: Add a triple-slash directive to include A-Frame's JSX type definitions.
 /// <reference path="../aframe.d.ts" />
 import React from 'react';
 import { Treasure, TreasureType } from '../types';

@@ -13,7 +13,8 @@ const ARScene: React.FC<ARSceneProps> = ({ treasures, onCollectTreasure }) => {
   // 🚀 Garantir que o AR.js inicie corretamente no mobile
   useEffect(() => {
     const sceneEl = document.querySelector('a-scene');
-    if (sceneEl && sceneEl.hasLoaded) return;
+    // Fix: Cast sceneEl to any to access the A-Frame specific 'hasLoaded' property.
+    if (sceneEl && (sceneEl as any).hasLoaded) return;
 
     if (sceneEl) {
       sceneEl.addEventListener('loaded', () => {
@@ -25,9 +26,8 @@ const ARScene: React.FC<ARSceneProps> = ({ treasures, onCollectTreasure }) => {
   return (
     <a-scene
       embedded
-      // AR.js config — compatível com mobile
-      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; 
-            patternRatio: 0.8; detectionMode: mono_and_matrix;"
+      // Simplified AR.js config for better mobile compatibility in this markerless setup
+      arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false;"
       device-orientation-permission-ui="enabled: true"
       vr-mode-ui="enabled: false"
       renderer="colorManagement: true; physicallyCorrectLights: true; alpha: true;"
@@ -47,13 +47,18 @@ const ARScene: React.FC<ARSceneProps> = ({ treasures, onCollectTreasure }) => {
         position="-1 2 1"
       ></a-entity>
 
-      {/* Câmera — o AR.js controla, mas forçamos o look-controls para suavidade */}
-      <a-camera
-        look-controls
-        position="0 0 0"
-        rotation="0 0 0"
-        wasd-controls="enabled: false"
-      ></a-camera>
+      {/* 
+        Let AR.js handle the camera. A cursor is added as a child
+        to handle click/tap events on our treasures. This resolves
+        conflicts and ensures the camera feed works correctly.
+      */}
+      <a-entity camera>
+        <a-cursor
+          color="#FFD700"
+          fuse={false}
+        ></a-cursor>
+      </a-entity>
+
 
       {/* Tesouros */}
       {treasures.map((treasure) => (

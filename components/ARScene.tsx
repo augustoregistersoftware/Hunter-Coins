@@ -1,5 +1,5 @@
 /// <reference path="../aframe.d.ts" />
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Treasure } from '../types';
 import TreasureComponent from './Treasure';
 
@@ -9,22 +9,53 @@ interface ARSceneProps {
 }
 
 const ARScene: React.FC<ARSceneProps> = ({ treasures, onCollectTreasure }) => {
+
+  // 🚀 Garantir que o AR.js inicie corretamente no mobile
+  useEffect(() => {
+    const sceneEl = document.querySelector('a-scene');
+    if (sceneEl && sceneEl.hasLoaded) return;
+
+    if (sceneEl) {
+      sceneEl.addEventListener('loaded', () => {
+        console.log('✅ AR.js Scene loaded on mobile');
+      });
+    }
+  }, []);
+
   return (
     <a-scene
       embedded
-      arjs="sourceType: webcam; debugUIEnabled: false;"
-      renderer="colorManagement: true; alpha: true;"
+      // AR.js config — compatível com mobile
+      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; 
+            patternRatio: 0.8; detectionMode: mono_and_matrix;"
+      device-orientation-permission-ui="enabled: true"
       vr-mode-ui="enabled: false"
-      style={{ height: '100vh', width: '100vw', position: 'absolute', top: 0, left: 0 }}
+      renderer="colorManagement: true; physicallyCorrectLights: true; alpha: true;"
+      style={{
+        height: '100vh',
+        width: '100vw',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: 0,
+      }}
     >
-      {/* Lighting */}
+      {/* Luz ambiente e direcional */}
       <a-entity light="type: ambient; color: #BBB"></a-entity>
-      <a-entity light="type: directional; color: #FFF; intensity: 0.8" position="-1 2 1"></a-entity>
+      <a-entity
+        light="type: directional; color: #FFF; intensity: 0.9"
+        position="-1 2 1"
+      ></a-entity>
 
-      {/* Camera */}
-      <a-camera position="0 0 0" look-controls></a-camera>
+      {/* Câmera — o AR.js controla, mas forçamos o look-controls para suavidade */}
+      <a-camera
+        look-controls
+        position="0 0 0"
+        rotation="0 0 0"
+        wasd-controls="enabled: false"
+      ></a-camera>
 
-      {/* Treasures */}
+      {/* Tesouros */}
       {treasures.map((treasure) => (
         <TreasureComponent
           key={treasure.id}

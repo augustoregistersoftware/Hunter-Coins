@@ -1,3 +1,4 @@
+// Fix: Add a triple-slash directive to include A-Frame's JSX type definitions.
 /// <reference path="../aframe.d.ts" />
 import React from 'react';
 import { Treasure, TreasureType } from '../types';
@@ -17,6 +18,9 @@ const TreasureComponent: React.FC<TreasureProps> = ({ treasure, onCollect }) => 
 
   return (
     <a-entity position={positionStr} onClick={handleClick}>
+      {/* Invisible hitbox for easier clicking on all devices */}
+      <a-sphere radius="0.3" material="visible: false;"></a-sphere>
+
       {type === TreasureType.COIN && (
         <a-entity>
           <a-cylinder

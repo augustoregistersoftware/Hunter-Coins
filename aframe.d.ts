@@ -5,7 +5,6 @@ declare global {
       'a-entity': any;
       'a-box': any;
       'a-camera': any;
-      'a-cursor': any;
       'a-cylinder': any;
       'a-plane': any;
       'a-sky': any;
@@ -19,4 +18,5 @@ declare global {
   }
 }
 
+// Export an empty object to treat this file as a module.
 export {};

@@ -13,7 +13,7 @@ const ARScene: React.FC<ARSceneProps> = ({ treasures, onCollectTreasure }) => {
   // 🚀 Garantir que o AR.js inicie corretamente no mobile
   useEffect(() => {
     const sceneEl = document.querySelector('a-scene');
-    // Fix: Cast sceneEl to any to access the A-Frame specific 'hasLoaded' property.
+    // FIX: Cast sceneEl to any to access A-Frame specific properties.
     if (sceneEl && (sceneEl as any).hasLoaded) return;
 
     if (sceneEl) {
@@ -26,8 +26,8 @@ const ARScene: React.FC<ARSceneProps> = ({ treasures, onCollectTreasure }) => {
   return (
     <a-scene
       embedded
-      // Simplified AR.js config for better mobile compatibility in this markerless setup
-      arjs="sourceType: webcam; trackingMethod: best; debugUIEnabled: false;"
+      // AR.js config simplificada para melhor compatibilidade markerless
+      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
       device-orientation-permission-ui="enabled: true"
       vr-mode-ui="enabled: false"
       renderer="colorManagement: true; physicallyCorrectLights: true; alpha: true;"
@@ -47,18 +47,20 @@ const ARScene: React.FC<ARSceneProps> = ({ treasures, onCollectTreasure }) => {
         position="-1 2 1"
       ></a-entity>
 
-      {/* 
-        Let AR.js handle the camera. A cursor is added as a child
-        to handle click/tap events on our treasures. This resolves
-        conflicts and ensures the camera feed works correctly.
-      */}
-      <a-entity camera>
-        <a-cursor
-          color="#FFD700"
-          fuse={false}
-        ></a-cursor>
-      </a-entity>
-
+      {/* Câmera com cursor para melhor interatividade */}
+      <a-camera
+        look-controls
+        position="0 0 0"
+        rotation="0 0 0"
+        wasd-controls="enabled: false"
+      >
+        <a-entity
+            cursor="fuse: false;"
+            position="0 0 -1"
+            geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03;"
+            material="color: #00BCD4; shader: flat; opacity: 0.7;"
+        />
+      </a-camera>
 
       {/* Tesouros */}
       {treasures.map((treasure) => (
